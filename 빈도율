@@ -1,0 +1,22 @@
+import pandas as pd
+import re
+
+# Input file name
+file_path = "combined_ai_reviews_with_freq.csv"
+df = pd.read_csv(file_path, encoding="ISO-8859-1")
+
+# Function to calculate duplication ratio
+def calculate_duplication_ratio(text):
+    words = re.findall(r'\b\w+\b', str(text).lower())  # tokenize and lowercase
+    total_words = len(words)
+    unique_words = len(set(words))
+    if total_words == 0:
+        return 0.0
+    return round((total_words - unique_words) / total_words, 4)
+
+# Apply function to calculate 'freq' column
+df['freq'] = df['text'].apply(calculate_duplication_ratio)
+
+# Save the result to a NEW file
+output_path = "file_with_calculated_freq.csv"
+df.to_csv(output_path, index=False)
